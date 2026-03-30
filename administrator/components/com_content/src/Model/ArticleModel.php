@@ -598,7 +598,15 @@ class ArticleModel extends AdminModel implements WorkflowModelInterface
                     $selectedCatId = (int) $filteredCategories;
                 }
 
-                $data->set('catid', $app->getInput()->getInt('catid', $selectedCatId));
+                $catId = $app->getInput()->getInt('catid', $selectedCatId);
+
+                if (empty($catId)) {
+                // fallback to default category when creating new article
+                $params = \Joomla\CMS\Component\ComponentHelper::getParams('com_content');
+                $catId = $params->get('default_category');
+                }
+
+$data->set('catid', $catId);
 
                 if ($app->isClient('administrator')) {
                     $data->set('language', $app->getInput()->getString('language', (!empty($filters['language']) ? $filters['language'] : null)));
